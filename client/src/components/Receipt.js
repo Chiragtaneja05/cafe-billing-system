@@ -1,10 +1,9 @@
 function Receipt({ owner, cart, total, gst, discount }) {
   const date = new Date();
 
-  // calculate subtotal again for clarity
-  const subTotal = cart.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0,
+  // calculate subtotal safely
+  const subTotal = Number(
+    cart.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(1),
   );
 
   return (
@@ -18,9 +17,9 @@ function Receipt({ owner, cart, total, gst, discount }) {
       {cart.map((item, index) => (
         <div key={index} className="row">
           <span>
-            {item.name} x {item.quantity}
+            {item.name} × {item.quantity}
           </span>
-          <span>₹{item.price * item.quantity}</span>
+          <span>₹{(item.price * item.quantity).toFixed(1)}</span>
         </div>
       ))}
 
@@ -28,20 +27,20 @@ function Receipt({ owner, cart, total, gst, discount }) {
 
       <div className="row">
         <span>Subtotal</span>
-        <span>₹{subTotal}</span>
+        <span>₹{subTotal.toFixed(1)}</span>
       </div>
 
       {gst > 0 && (
         <div className="row">
           <span>GST</span>
-          <span>₹{gst.toFixed(2)}</span>
+          <span>₹{gst.toFixed(1)}</span>
         </div>
       )}
 
       {discount > 0 && (
         <div className="row">
           <span>Discount</span>
-          <span>-₹{discount}</span>
+          <span>-₹{discount.toFixed(1)}</span>
         </div>
       )}
 
@@ -49,7 +48,7 @@ function Receipt({ owner, cart, total, gst, discount }) {
 
       <div className="row">
         <strong>Total</strong>
-        <strong>₹{total}</strong>
+        <strong>₹{total.toFixed(1)}</strong>
       </div>
 
       <p style={{ marginTop: 10, textAlign: "center" }}>Thank you! ☕</p>

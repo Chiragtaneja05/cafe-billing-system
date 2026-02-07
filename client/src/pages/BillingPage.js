@@ -63,8 +63,10 @@ function BillingPage() {
     0,
   );
 
-  const gstAmount = (subTotal * gstPercent) / 100;
-  const finalTotal = Math.max(subTotal + gstAmount - discount, 0);
+  const gstAmount = Number(((subTotal * gstPercent) / 100).toFixed(1));
+  const finalTotal = Number(
+    Math.max(subTotal + gstAmount - discount, 0).toFixed(1),
+  );
 
   // generate bill + print
   const generateBill = async () => {
