@@ -1,0 +1,32 @@
+.receipt {
+  width: 80mm;
+  padding: 10px;
+  font-family: monospace;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin: 4px 0;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .receipt,
+  .receipt * {
+    visibility: visible;
+  }
+
+  .receipt {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  button {
+    display: none;
+  }
+}
