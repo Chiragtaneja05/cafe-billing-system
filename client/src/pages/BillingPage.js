@@ -95,12 +95,18 @@ function BillingPage() {
     setShowReceipt(true);
 
     setTimeout(() => {
+      document.body.classList.add("printing");
       window.print();
-      setCart([]);
-      setDiscount(0);
-      setGstPercent(0);
-      setShowReceipt(false);
-    }, 500);
+
+      // cleanup AFTER print dialog opens
+      setTimeout(() => {
+        document.body.classList.remove("printing");
+        setCart([]);
+        setDiscount(0);
+        setGstPercent(0);
+        setShowReceipt(false);
+      }, 500);
+    }, 1200);
   };
 
   return (
@@ -179,8 +185,7 @@ function BillingPage() {
           </div>
         </div>
 
-        {/* RECEIPT */}
-        {showReceipt && (
+        <div style={{ display: showReceipt ? "block" : "none" }}>
           <Receipt
             owner={owner}
             cart={cart}
@@ -188,7 +193,7 @@ function BillingPage() {
             gst={gstAmount}
             discount={discount}
           />
-        )}
+        </div>
       </div>
     </>
   );

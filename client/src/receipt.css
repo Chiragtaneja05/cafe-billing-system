@@ -10,23 +10,24 @@
   margin: 4px 0;
 }
 
+/* ✅ iOS-safe print rules */
 @media print {
   body * {
     visibility: hidden;
   }
 
-  .receipt,
-  .receipt * {
+  body.printing .receipt,
+  body.printing .receipt * {
     visibility: visible;
   }
 
-  .receipt {
+  body.printing .receipt {
     position: absolute;
     left: 0;
     top: 0;
-  }
-
-  button {
-    display: none;
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    background: white;
   }
 }
