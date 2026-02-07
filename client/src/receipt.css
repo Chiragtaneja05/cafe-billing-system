@@ -1,29 +1,25 @@
 .receipt {
-  width: 80mm;
-  padding: 10px;
+  width: 72mm; /* ✅ safe printable width */
+  max-width: 72mm;
+  padding: 8px;
   font-family: monospace;
+  font-size: 14px;
+  box-sizing: border-box;
 }
 
 .row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 6px;
   margin: 4px 0;
-  width: 100%;
-}
-
-.row span:first-child {
-  max-width: 65%;
-  word-wrap: break-word;
 }
 
 .row span:last-child {
-  min-width: 35%;
   text-align: right;
   white-space: nowrap;
 }
 
-/* ✅ iOS-safe print rules */
+/* ✅ SINGLE, iOS-safe print rule */
 @media print {
   body * {
     visibility: hidden;
@@ -35,12 +31,13 @@
   }
 
   body.printing .receipt {
-    position: absolute;
+    position: fixed;
     left: 0;
     top: 0;
-    width: 100%;
-    padding: 12px;
-    font-size: 14px;
+    width: 72mm; /* ✅ NOT 100% */
+    max-width: 72mm;
+    margin: 0;
+    padding: 8px;
     background: white;
   }
 }
