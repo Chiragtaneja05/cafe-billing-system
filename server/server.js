@@ -14,7 +14,15 @@ const salesRoutes = require("./routes/salesRoutes");
 const app = express(); // ✅ app FIRST
 
 // middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "https://classy-cendol-c9eed7.netlify.app",
+    ],
+    credentials: true,
+  }),
+);
 app.use(express.json());
 
 // routes
