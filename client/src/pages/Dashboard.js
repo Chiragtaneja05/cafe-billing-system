@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getToken } from "../utils/auth";
 import Navbar from "../components/Navbar";
+import "../App.css"; // ✅ Import CSS
 
 function Dashboard() {
   const [stats, setStats] = useState({ totalSales: 0, billCount: 0 });
@@ -29,8 +30,9 @@ function Dashboard() {
   return (
     <>
       <Navbar />
-      <div style={styles.container}>
-        <div style={styles.header}>
+      {/* ✅ Use responsive CSS class */}
+      <div className="dashboard-container">
+        <div className="dashboard-header">
           <h2>Dashboard</h2>
 
           {/* 🔽 Filter Dropdown */}
@@ -48,7 +50,8 @@ function Dashboard() {
         {loading ? (
           <p>Loading analytics...</p>
         ) : (
-          <div style={styles.grid}>
+          /* ✅ Use responsive CSS class */
+          <div className="dashboard-grid">
             {/* Sales Card */}
             <div style={{ ...styles.card, background: "#e0f7fa" }}>
               <h3>Total Sales</h3>
@@ -75,28 +78,13 @@ function Dashboard() {
   );
 }
 
+// Minimal inline styles for specific elements
 const styles = {
-  container: {
-    padding: 40,
-    maxWidth: "800px",
-    margin: "0 auto",
-  },
-  header: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 30,
-  },
   select: {
     padding: "8px 12px",
     fontSize: "16px",
     borderRadius: "4px",
     border: "1px solid #ccc",
-  },
-  grid: {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: 20,
   },
   card: {
     padding: 30,

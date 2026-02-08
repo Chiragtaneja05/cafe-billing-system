@@ -1,38 +1,153 @@
-.App {
-  text-align: center;
+/* =========================================
+   🚀 TAJINDER CAFE RESPONSIVE STYLES
+   ========================================= */
+
+/* GLOBAL RESETS */
+* {
+  box-sizing: border-box;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+body {
+  margin: 0;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+  background-color: #f0f2f5;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* 📱 RESPONSIVE NAVBAR */
+.navbar {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  padding: 15px 40px;
+  background: #333;
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.nav-brand {
+  font-size: 20px;
+  font-weight: bold;
+  text-decoration: none;
+  color: white;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.nav-menu {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.logout-btn {
+  background: #c0392b;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+/* Navbar Mobile View */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    padding: 15px;
+    gap: 15px;
   }
-  to {
-    transform: rotate(360deg);
+  .nav-menu {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+  }
+}
+
+/* 📱 RESPONSIVE DASHBOARD */
+.dashboard-container {
+  padding: 40px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2 Columns on Desktop */
+  gap: 20px;
+}
+
+/* Dashboard Mobile View */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 20px;
+  }
+  .dashboard-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  .dashboard-grid {
+    grid-template-columns: 1fr; /* 1 Column on Mobile */
+  }
+}
+
+/* 📱 RESPONSIVE BILLING PAGE */
+.billing-container {
+  display: flex;
+  height: calc(100vh - 60px); /* Fill screen on Desktop */
+  background: #f0f2f5;
+}
+
+.menu-section {
+  flex: 2;
+  padding: 20px;
+  overflow-y: auto; /* Scroll independently on Desktop */
+}
+
+.cart-section {
+  flex: 1;
+  background: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid #ddd;
+  max-width: 400px;
+  min-width: 300px;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 15px;
+}
+
+/* Billing Page Mobile View */
+@media (max-width: 900px) {
+  .billing-container {
+    flex-direction: column; /* Stack Vertically */
+    height: auto;
+  }
+
+  .menu-section {
+    overflow-y: visible;
+    height: auto;
+  }
+
+  .cart-section {
+    max-width: 100%;
+    border-left: none;
+    border-top: 2px solid #333;
+    order: -1; /* Puts Cart on top (Optional) */
   }
 }

@@ -1,4 +1,12 @@
-function Receipt({ owner, cart, total, gst, discount }) {
+function Receipt({
+  owner,
+  cart,
+  total,
+  gst,
+  discount,
+  customerName, // ✅ Received from parent
+  customerPhone, // ✅ Received from parent
+}) {
   const date = new Date();
 
   // calculate subtotal safely
@@ -11,6 +19,22 @@ function Receipt({ owner, cart, total, gst, discount }) {
       <h2>{owner?.cafeName}</h2>
       <p>Owner: {owner?.name}</p>
       <p>{date.toLocaleString()}</p>
+
+      {/* ✅ NEW: Customer Details Section */}
+      {(customerName || customerPhone) && (
+        <div style={{ margin: "10px 0", textAlign: "left" }}>
+          {customerName && (
+            <div>
+              Customer: <strong>{customerName}</strong>
+            </div>
+          )}
+          {customerPhone && (
+            <div>
+              Phone: <strong>{customerPhone}</strong>
+            </div>
+          )}
+        </div>
+      )}
 
       <hr />
 

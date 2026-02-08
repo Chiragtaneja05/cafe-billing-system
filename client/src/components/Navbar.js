@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../utils/auth";
+import "../App.css"; // Ensure CSS is imported if not already in App.js
 
 function Navbar() {
   const navigate = useNavigate();
@@ -10,68 +11,32 @@ function Navbar() {
   };
 
   return (
-    <nav style={styles.nav}>
-      <div style={styles.brand}>
-        <Link to="/dashboard" style={styles.link}>
+    <nav className="navbar">
+      <div className="nav-brand-container">
+        <Link to="/dashboard" className="nav-brand">
           Tajinder Cafe
         </Link>
       </div>
-      <div style={styles.menu}>
-        <Link to="/dashboard" style={styles.navItem}>
+
+      <div className="nav-menu">
+        <Link to="/dashboard" className="nav-link">
           Dashboard
         </Link>
-        <Link to="/billing" style={styles.navItem}>
+        <Link to="/billing" className="nav-link">
           Billing
         </Link>
-        <Link to="/menu" style={styles.navItem}>
+        <Link to="/menu" className="nav-link">
           Menu
         </Link>
-        <Link to="/bills" style={styles.navItem}>
+        <Link to="/bills" className="nav-link">
           History
         </Link>
-        <button onClick={handleLogout} style={styles.logoutBtn}>
+        <button onClick={handleLogout} className="logout-btn">
           Logout
         </button>
       </div>
     </nav>
   );
 }
-
-const styles = {
-  nav: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "15px 40px",
-    background: "#333",
-    color: "white",
-  },
-  brand: {
-    fontSize: "20px",
-    fontWeight: "bold",
-  },
-  menu: {
-    display: "flex",
-    gap: "20px",
-    alignItems: "center",
-  },
-  link: {
-    color: "white",
-    textDecoration: "none",
-  },
-  navItem: {
-    color: "white",
-    textDecoration: "none",
-    fontSize: "16px",
-  },
-  logoutBtn: {
-    background: "#c0392b",
-    color: "white",
-    border: "none",
-    padding: "8px 12px",
-    cursor: "pointer",
-    borderRadius: "4px",
-  },
-};
 
 export default Navbar;

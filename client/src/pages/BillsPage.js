@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { getToken, getOwner } from "../utils/auth";
 import Navbar from "../components/Navbar";
-import Receipt from "../components/Receipt"; // ✅ Import Receipt
-import "../receipt.css"; // ✅ Import Print Styles
+import Receipt from "../components/Receipt";
+import "../receipt.css";
 
 function BillsPage() {
   const [bills, setBills] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedBill, setSelectedBill] = useState(null); // ✅ Track bill to print
-  const [showReceipt, setShowReceipt] = useState(false); // ✅ Toggle print view
+  const [selectedBill, setSelectedBill] = useState(null);
+  const [showReceipt, setShowReceipt] = useState(false);
 
   const owner = getOwner();
 
@@ -29,7 +29,7 @@ function BillsPage() {
       });
   }, []);
 
-  // ✅ Handle Reprint Logic
+  // Handle Reprint Logic
   const handleReprint = (bill) => {
     setSelectedBill(bill);
     setShowReceipt(true);
@@ -64,10 +64,11 @@ function BillsPage() {
               <thead>
                 <tr>
                   <th style={styles.th}>Date</th>
+                  <th style={styles.th}>Customer</th> {/* ✅ New Column */}
                   <th style={styles.th}>Items</th>
                   <th style={styles.th}>Payment</th>
                   <th style={styles.th}>Total (₹)</th>
-                  <th style={styles.th}>Action</th> {/* ✅ New Column */}
+                  <th style={styles.th}>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -76,6 +77,15 @@ function BillsPage() {
                     <td style={styles.td}>
                       {new Date(bill.createdAt).toLocaleDateString()}{" "}
                       {new Date(bill.createdAt).toLocaleTimeString()}
+                    </td>
+                    <td style={styles.td}>
+                      {/* ✅ Show Name or "Guest" */}
+                      {bill.customerName || "Guest"}
+                      {bill.customerPhone && (
+                        <div style={{ fontSize: "12px", color: "#666" }}>
+                          {bill.customerPhone}
+                        </div>
+                      )}
                     </td>
                     <td style={styles.td}>
                       {bill.items.map((item, index) => (
@@ -90,7 +100,6 @@ function BillsPage() {
                       ₹{bill.totalAmount}
                     </td>
                     <td style={styles.td}>
-                      {/* ✅ Print Button */}
                       <button
                         onClick={() => handleReprint(bill)}
                         style={styles.printBtn}
@@ -105,17 +114,19 @@ function BillsPage() {
           </div>
         )}
 
-        {/* ✅ Hidden Receipt Component (Only visible when printing) */}
+        {/* Hidden Receipt Component */}
         {showReceipt && selectedBill && (
           <div className="receipt-print-area">
             <Receipt
               owner={owner}
               cart={selectedBill.items}
               total={selectedBill.totalAmount}
-              // Note: If you didn't save GST/Discount to DB, these default to 0
-              gst={0}
-              discount={0}
+              gst={0} // Defaulting to 0 since we didn't store GST yet
+              discount={0} // Defaulting to 0
               subTotal={selectedBill.totalAmount}
+              // ✅ Pass stored customer details to receipt
+              customerName={selectedBill.customerName}
+              customerPhone={selectedBill.customerPhone}
             />
           </div>
         )}

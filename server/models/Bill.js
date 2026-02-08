@@ -2,6 +2,14 @@ const mongoose = require("mongoose");
 
 const billSchema = new mongoose.Schema(
   {
+    customerName: {
+      type: String,
+      default: "Guest", // Default if left empty
+    },
+    customerPhone: {
+      type: String,
+      default: "", // Optional
+    },
     items: [
       {
         name: String,
@@ -21,7 +29,7 @@ const billSchema = new mongoose.Schema(
     // 🔑 IMPORTANT: Link bill to owner
     owner: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Owner", // or "User" (use the same name as your auth model)
+      ref: "Owner",
       required: true,
     },
   },

@@ -7,7 +7,8 @@ const router = express.Router();
 // 🔒 CREATE bill (OWNER-LINKED)
 router.post("/", authMiddleware, async (req, res) => {
   try {
-    const { items, paymentMethod } = req.body;
+    // ✅ 1. Extract customer details from request body
+    const { items, paymentMethod, customerName, customerPhone } = req.body;
 
     let totalAmount = 0;
     items.forEach((item) => {
@@ -18,7 +19,9 @@ router.post("/", authMiddleware, async (req, res) => {
       items,
       totalAmount,
       paymentMethod,
-      owner: req.owner._id, // 🔑 IMPORTANT
+      customerName, // ✅ 2. Add Name to database object
+      customerPhone, // ✅ 3. Add Phone to database object
+      owner: req.owner._id,
     });
 
     const savedBill = await bill.save();
