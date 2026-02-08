@@ -4,8 +4,9 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import Dashboard from "./pages/Dashboard";
 import BillingPage from "./pages/BillingPage";
-import ProtectedRoute from "./components/ProtectedRoute";
 import MenuPage from "./pages/MenuPage";
+import BillsPage from "./pages/BillsPage"; // ✅ Import new page
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -38,6 +39,16 @@ function App() {
           element={
             <ProtectedRoute>
               <MenuPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ✅ New Route for History */}
+        <Route
+          path="/bills"
+          element={
+            <ProtectedRoute>
+              <BillsPage />
             </ProtectedRoute>
           }
         />

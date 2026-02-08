@@ -1,62 +1,75 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { getOwner, getToken, logout } from "../utils/auth";
+import { getToken } from "../utils/auth";
 import Navbar from "../components/Navbar";
 
 function Dashboard() {
-  const owner = getOwner();
-  const navigate = useNavigate();
-  const [summary, setSummary] = useState(null);
+  const [stats, setStats] = useState({ totalSales: 0, billCount: 0 });
+  const [range, setRange] = useState("today"); // 'today', 'week', 'month'
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/sales/today`, {
+    setLoading(true);
+    // Fetch data with the selected range query
+    fetch(`${process.env.REACT_APP_API_URL}/api/sales?range=${range}`, {
       headers: {
         Authorization: `Bearer ${getToken()}`,
       },
     })
       .then((res) => res.json())
-      .then((data) => setSummary(data))
-      .catch((err) => console.error(err));
-  }, []);
-
-  const handleLogout = () => {
-    if (window.confirm("Are you sure you want to logout?")) {
-      logout();
-      navigate("/login");
-    }
-  };
+      .then((data) => {
+        setStats(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching sales:", err);
+        setLoading(false);
+      });
+  }, [range]); // 🔄 Re-run whenever 'range' changes
 
   return (
     <>
       <Navbar />
-
       <div style={styles.container}>
-        <h2>Welcome, {owner?.name}</h2>
-        <h3>{owner?.cafeName}</h3>
+        <div style={styles.header}>
+          <h2>Dashboard</h2>
 
-        <hr />
-
-        {summary ? (
-          <div style={styles.card}>
-            <h2>📊 Today’s Sales</h2>
-            <p>
-              <strong>Total Sales:</strong> ₹{summary.totalSales}
-            </p>
-            <p>
-              <strong>Total Bills:</strong> {summary.billCount}
-            </p>
-          </div>
-        ) : (
-          <p>Loading sales data...</p>
-        )}
-
-        <div style={styles.actions}>
-          <button onClick={() => navigate("/billing")}>Open Billing</button>
-
-          <button onClick={() => navigate("/menu")}>Manage Menu</button>
-
-          <button onClick={handleLogout}>Logout</button>
+          {/* 🔽 Filter Dropdown */}
+          <select
+            value={range}
+            onChange={(e) => setRange(e.target.value)}
+            style={styles.select}
+          >
+            <option value="today">Today</option>
+            <option value="week">Last 7 Days</option>
+            <option value="month">Last 30 Days</option>
+          </select>
         </div>
+
+        {loading ? (
+          <p>Loading analytics...</p>
+        ) : (
+          <div style={styles.grid}>
+            {/* Sales Card */}
+            <div style={{ ...styles.card, background: "#e0f7fa" }}>
+              <h3>Total Sales</h3>
+              <p style={styles.number}>₹{stats.totalSales}</p>
+              <small style={styles.subtext}>
+                {range === "today"
+                  ? "Generated Today"
+                  : range === "week"
+                    ? "Past 7 Days"
+                    : "Past 30 Days"}
+              </small>
+            </div>
+
+            {/* Orders Card */}
+            <div style={{ ...styles.card, background: "#fff3e0" }}>
+              <h3>Total Orders</h3>
+              <p style={styles.number}>{stats.billCount}</p>
+              <small style={styles.subtext}>Bills Created</small>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
@@ -65,16 +78,41 @@ function Dashboard() {
 const styles = {
   container: {
     padding: 40,
+    maxWidth: "800px",
+    margin: "0 auto",
+  },
+  header: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 30,
+  },
+  select: {
+    padding: "8px 12px",
+    fontSize: "16px",
+    borderRadius: "4px",
+    border: "1px solid #ccc",
+  },
+  grid: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: 20,
   },
   card: {
-    background: "#f5f5f5",
-    padding: 20,
-    borderRadius: 6,
-    marginBottom: 20,
+    padding: 30,
+    borderRadius: 8,
+    textAlign: "center",
+    boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
   },
-  actions: {
-    display: "flex",
-    gap: 15,
+  number: {
+    fontSize: "36px",
+    fontWeight: "bold",
+    margin: "10px 0",
+    color: "#333",
+  },
+  subtext: {
+    color: "#666",
+    fontSize: "14px",
   },
 };
 

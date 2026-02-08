@@ -1,47 +1,76 @@
-import { useNavigate } from "react-router-dom";
-import { getOwner, logout } from "../utils/auth";
+import { Link, useNavigate } from "react-router-dom";
+import { logout } from "../utils/auth";
 
 function Navbar() {
-  const owner = getOwner();
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    if (window.confirm("Are you sure you want to logout?")) {
-      logout();
-      navigate("/login");
-    }
+    logout();
+    navigate("/login");
   };
 
   return (
-    <div style={styles.navbar}>
-      <div style={styles.left}>
-        <strong>{owner?.cafeName || "Cafe Billing"}</strong>
+    <nav style={styles.nav}>
+      <div style={styles.brand}>
+        <Link to="/dashboard" style={styles.link}>
+          Tajinder Cafe
+        </Link>
       </div>
-
-      <div style={styles.right}>
-        <button onClick={() => navigate("/dashboard")}>Dashboard</button>
-        <button onClick={() => navigate("/menu")}>Menu</button>
-        <button onClick={() => navigate("/billing")}>Billing</button>
-        <button onClick={handleLogout}>Logout</button>
+      <div style={styles.menu}>
+        <Link to="/dashboard" style={styles.navItem}>
+          Dashboard
+        </Link>
+        <Link to="/billing" style={styles.navItem}>
+          Billing
+        </Link>
+        <Link to="/menu" style={styles.navItem}>
+          Menu
+        </Link>
+        <Link to="/bills" style={styles.navItem}>
+          History
+        </Link>
+        <button onClick={handleLogout} style={styles.logoutBtn}>
+          Logout
+        </button>
       </div>
-    </div>
+    </nav>
   );
 }
 
 const styles = {
-  navbar: {
+  nav: {
     display: "flex",
     justifyContent: "space-between",
-    padding: "12px 20px",
-    backgroundColor: "#222",
-    color: "#fff",
+    alignItems: "center",
+    padding: "15px 40px",
+    background: "#333",
+    color: "white",
   },
-  left: {
-    fontSize: 18,
+  brand: {
+    fontSize: "20px",
+    fontWeight: "bold",
   },
-  right: {
+  menu: {
     display: "flex",
-    gap: 10,
+    gap: "20px",
+    alignItems: "center",
+  },
+  link: {
+    color: "white",
+    textDecoration: "none",
+  },
+  navItem: {
+    color: "white",
+    textDecoration: "none",
+    fontSize: "16px",
+  },
+  logoutBtn: {
+    background: "#c0392b",
+    color: "white",
+    border: "none",
+    padding: "8px 12px",
+    cursor: "pointer",
+    borderRadius: "4px",
   },
 };
 
