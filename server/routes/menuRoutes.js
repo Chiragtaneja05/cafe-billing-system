@@ -4,6 +4,9 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
+// Debug Log: Confirm this file is loaded
+console.log("✅ Menu Routes Loaded");
+
 // 🔒 ADD menu item
 router.post("/", authMiddleware, async (req, res) => {
   try {
@@ -19,7 +22,7 @@ router.post("/", authMiddleware, async (req, res) => {
   }
 });
 
-// 🔒 GET all menu items (OWNER ONLY)
+// 🔒 GET all menu items
 router.get("/", authMiddleware, async (req, res) => {
   try {
     const items = await Menu.find({ owner: req.owner._id });
@@ -29,7 +32,35 @@ router.get("/", authMiddleware, async (req, res) => {
   }
 });
 
-// 🔒 DELETE menu item (OWNER SAFE)
+// 🔒 UPDATE menu item (The Route Causing Issues)
+router.put("/:id", authMiddleware, async (req, res) => {
+  console.log(`🔄 Update Request Received for ID: ${req.params.id}`); // Server Log
+
+  try {
+    const { name, price, category } = req.body;
+
+    const updatedItem = await Menu.findOneAndUpdate(
+      { _id: req.params.id, owner: req.owner._id },
+      { name, price, category },
+      { new: true },
+    );
+
+    if (!updatedItem) {
+      console.log("❌ Item not found or unauthorized");
+      return res
+        .status(404)
+        .json({ message: "Item not found or unauthorized" });
+    }
+
+    console.log("✅ Item Updated Successfully");
+    res.json(updatedItem);
+  } catch (error) {
+    console.error("❌ Update Error:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 🔒 DELETE menu item
 router.delete("/:id", authMiddleware, async (req, res) => {
   try {
     const deleted = await Menu.findOneAndDelete({

@@ -1,5 +1,4 @@
 require("dotenv").config();
-console.log("ENV CHECK:", process.env.MONGO_URI);
 
 const express = require("express");
 const mongoose = require("mongoose");
@@ -11,7 +10,7 @@ const billRoutes = require("./routes/billRoutes");
 const authRoutes = require("./routes/authRoutes");
 const salesRoutes = require("./routes/salesRoutes");
 
-const app = express(); // ✅ app FIRST
+const app = express();
 
 // middleware
 app.use(
@@ -24,6 +23,12 @@ app.use(
   }),
 );
 app.use(express.json());
+
+// 🔍 DEBUG LOGGER: Prints every request to the terminal
+app.use((req, res, next) => {
+  console.log(`📥 ${req.method} ${req.path}`);
+  next();
+});
 
 // routes
 app.use("/api/menu", menuRoutes);
@@ -40,14 +45,15 @@ app.get("/", (req, res) => {
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
-    console.log("MongoDB Atlas connected");
+    console.log("✅ MongoDB Atlas connected");
 
     const PORT = process.env.PORT || 5000;
 
     app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`-------------------------------------`);
     });
   })
   .catch((err) => {
-    console.error("MongoDB connection failed:", err.message);
+    console.error("❌ MongoDB connection failed:", err.message);
   });
