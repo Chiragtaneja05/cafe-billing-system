@@ -1,5 +1,6 @@
+/* ✅ Layout for the Receipt Component */
 .receipt {
-  width: 72mm; /* ✅ safe printable width */
+  width: 72mm;
   max-width: 72mm;
   padding: 8px;
   font-family: monospace;
@@ -19,25 +20,37 @@
   white-space: nowrap;
 }
 
-/* ✅ SINGLE, iOS-safe print rule */
+/* 🚀 PRINT MODE ONLY */
 @media print {
+  /* 1. Hide EVERYTHING and collapse height so no extra pages generate */
   body * {
     visibility: hidden;
+    height: 0; /* ⬅️ CRITICAL FIX: Collapses empty space */
+    overflow: hidden; /* ⬅️ CRITICAL FIX: Hides scrollbars */
   }
 
-  body.printing .receipt,
-  body.printing .receipt * {
+  /* 2. Show ONLY the Receipt Wrapper and its children */
+  .receipt-print-area,
+  .receipt-print-area * {
     visibility: visible;
+    height: auto; /* ⬅️ Restore height for the bill */
+    overflow: visible;
   }
 
-  body.printing .receipt {
-    position: fixed;
+  /* 3. Position Receipt at the top-left */
+  .receipt-print-area {
+    position: absolute;
     left: 0;
     top: 0;
-    width: 72mm; /* ✅ NOT 100% */
-    max-width: 72mm;
+    width: 72mm;
     margin: 0;
-    padding: 8px;
+    padding: 0;
     background: white;
+  }
+
+  /* 4. Remove "React App" Header & URL Footer */
+  @page {
+    size: auto;
+    margin: 0mm; /* ⬅️ Removes browser headers/footers */
   }
 }
