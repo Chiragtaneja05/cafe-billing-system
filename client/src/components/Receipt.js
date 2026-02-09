@@ -4,8 +4,8 @@ function Receipt({
   total,
   gst,
   discount,
-  customerName, // ✅ Received from parent
-  customerPhone, // ✅ Received from parent
+  customerName,
+  customerPhone,
 }) {
   const date = new Date();
 
@@ -16,28 +16,55 @@ function Receipt({
 
   return (
     <div className="receipt">
-      <h2>{owner?.cafeName}</h2>
-      <p>Owner: {owner?.name}</p>
-      <p>{date.toLocaleString()}</p>
+      {/* 🏪 CAFE DETAILS (From Settings) */}
+      <h2 style={{ margin: "0 0 5px 0" }}>
+        {owner?.cafeName || "Tajinder Cafe"}
+      </h2>
 
-      {/* ✅ NEW: Customer Details Section */}
-      {(customerName || customerPhone) && (
-        <div style={{ margin: "10px 0", textAlign: "left" }}>
-          {customerName && (
-            <div>
-              Customer: <strong>{customerName}</strong>
-            </div>
-          )}
-          {customerPhone && (
-            <div>
-              Phone: <strong>{customerPhone}</strong>
-            </div>
-          )}
-        </div>
+      {/* ✅ Show Address if saved in Settings */}
+      {owner?.address && (
+        <p style={{ fontSize: "12px", margin: "2px 0" }}>{owner.address}</p>
+      )}
+
+      {/* ✅ Show Cafe Phone if saved in Settings */}
+      {owner?.phone && (
+        <p style={{ fontSize: "12px", margin: "2px 0" }}>Ph: {owner.phone}</p>
       )}
 
       <hr />
 
+      {/* 📅 DATE & CUSTOMER INFO */}
+      <div style={{ textAlign: "left", fontSize: "12px", marginBottom: "5px" }}>
+        <p>
+          Date: {date.toLocaleDateString()} {date.toLocaleTimeString()}
+        </p>
+
+        {/* ✅ Customer Details Section */}
+        {(customerName || customerPhone) && (
+          <div
+            style={{
+              marginTop: "5px",
+              borderTop: "1px dashed #ccc",
+              paddingTop: "5px",
+            }}
+          >
+            {customerName && (
+              <div>
+                Customer: <strong>{customerName}</strong>
+              </div>
+            )}
+            {customerPhone && (
+              <div>
+                Phone: <strong>{customerPhone}</strong>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      <hr />
+
+      {/* 🛒 ITEMS LIST */}
       {cart.map((item, index) => (
         <div key={index} className="row">
           <span>
@@ -49,6 +76,7 @@ function Receipt({
 
       <hr />
 
+      {/* 💰 CALCULATIONS */}
       <div className="row">
         <span>Subtotal</span>
         <span>₹{subTotal.toFixed(1)}</span>
@@ -57,7 +85,7 @@ function Receipt({
       {gst > 0 && (
         <div className="row">
           <span>GST</span>
-          <span>₹{gst.toFixed(1)}</span>
+          <span>+₹{gst.toFixed(1)}</span>
         </div>
       )}
 

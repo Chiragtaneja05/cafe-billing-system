@@ -5,8 +5,15 @@ import RegisterPage from "./pages/RegisterPage";
 import Dashboard from "./pages/Dashboard";
 import BillingPage from "./pages/BillingPage";
 import MenuPage from "./pages/MenuPage";
-import BillsPage from "./pages/BillsPage"; // ✅ Import new page
+import BillsPage from "./pages/BillsPage";
+import Settings from "./pages/Settings"; // ✅ Import Settings Page
 import ProtectedRoute from "./components/ProtectedRoute";
+import PublicMenu from "./pages/PublicMenu"; // Top of file
+import ExpensesPage from "./pages/ExpensesPage";
+
+// ... inside <Routes>
+
+import "./App.css"; // ✅ Ensure CSS is imported for responsive design
 
 function App() {
   return (
@@ -33,6 +40,16 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/expenses"
+          element={
+            <ProtectedRoute>
+              <ExpensesPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="/menu/public/:ownerId" element={<PublicMenu />} />
 
         <Route
           path="/menu"
@@ -43,12 +60,21 @@ function App() {
           }
         />
 
-        {/* ✅ New Route for History */}
         <Route
           path="/bills"
           element={
             <ProtectedRoute>
               <BillsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ✅ New Route for Settings */}
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <Settings />
             </ProtectedRoute>
           }
         />

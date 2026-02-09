@@ -15,11 +15,16 @@ const menuSchema = new mongoose.Schema(
       type: String,
       default: "General",
     },
+    // ✅ NEW: Stock field for Inventory Tracking
+    stock: {
+      type: Number,
+      default: 100, // Default stock if not specified
+    },
 
-    // 🔑 IMPORTANT: link menu item to owner
+    // 🔑 Link menu item to owner
     owner: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Owner", // or "User" — MUST match your auth model
+      ref: "Owner",
       required: true,
     },
   },

@@ -19,6 +19,15 @@ const ownerSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    // ✅ NEW FIELDS FOR SETTINGS
+    address: {
+      type: String,
+      default: "",
+    },
+    phone: {
+      type: String,
+      default: "",
+    },
   },
   { timestamps: true },
 );

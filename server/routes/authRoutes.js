@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Owner = require("../models/Owner");
+const authMiddleware = require("../middleware/authMiddleware"); // ✅ Import Middleware
 
 const router = express.Router();
 
@@ -58,6 +59,39 @@ router.post("/login", async (req, res) => {
         name: owner.name,
         cafeName: owner.cafeName,
         email: owner.email,
+        address: owner.address || "", // ✅ Send Address
+        phone: owner.phone || "", // ✅ Send Phone
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ✅ NEW: UPDATE PROFILE (Name, Address, Phone)
+router.put("/profile", authMiddleware, async (req, res) => {
+  try {
+    const { cafeName, address, phone } = req.body;
+
+    const owner = await Owner.findById(req.owner._id);
+    if (!owner) return res.status(404).json({ message: "Owner not found" });
+
+    // Update fields
+    if (cafeName) owner.cafeName = cafeName;
+    if (address) owner.address = address;
+    if (phone) owner.phone = phone;
+
+    await owner.save();
+
+    res.json({
+      message: "Profile updated",
+      owner: {
+        id: owner._id,
+        name: owner.name,
+        cafeName: owner.cafeName,
+        email: owner.email,
+        address: owner.address,
+        phone: owner.phone,
       },
     });
   } catch (error) {
