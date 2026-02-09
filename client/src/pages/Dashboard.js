@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react"; // ✅ Added useCallback
 import { getToken } from "../utils/auth";
 import Navbar from "../components/Navbar";
 import "../App.css";
 
 function Dashboard() {
-  // ✅ Updated State to hold Expenses & Profit
   const [stats, setStats] = useState({
     totalSales: 0,
     totalExpenses: 0,
@@ -21,8 +20,40 @@ function Dashboard() {
   const [topItems, setTopItems] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // 1. Fetch Dashboard Data
-  const fetchDashboardData = () => {
+  // 🧮 Logic to find Best Sellers
+  const calculateTopSelling = useCallback((bills) => {
+    const itemCounts = {};
+    bills.forEach((bill) => {
+      bill.items.forEach((item) => {
+        itemCounts[item.name] = (itemCounts[item.name] || 0) + item.quantity;
+      });
+    });
+
+    const sortedItems = Object.keys(itemCounts)
+      .map((key) => ({ name: key, count: itemCounts[key] }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+
+    setTopItems(sortedItems);
+  }, []);
+
+  // 2. Fetch Stock
+  const fetchStock = useCallback(() => {
+    fetch(`${process.env.REACT_APP_API_URL}/api/menu`, {
+      headers: { Authorization: `Bearer ${getToken()}` },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          const lowStock = data.filter((item) => (item.stock || 0) < 20);
+          setLowStockItems(lowStock);
+        }
+      })
+      .catch((err) => console.error("Error fetching menu:", err));
+  }, []);
+
+  // 1. Fetch Dashboard Data - ✅ Wrapped in useCallback to fix Netlify Error
+  const fetchDashboardData = useCallback(() => {
     setLoading(true);
 
     let url = `${process.env.REACT_APP_API_URL}/api/sales?range=${range}`;
@@ -39,7 +70,6 @@ function Dashboard() {
     })
       .then((res) => res.json())
       .then((data) => {
-        // ✅ Update Stats with new fields from Backend
         setStats({
           totalSales: data.totalSales || 0,
           totalExpenses: data.totalExpenses || 0,
@@ -55,47 +85,16 @@ function Dashboard() {
       .catch((err) => console.error("Error fetching dashboard data:", err))
       .finally(() => {
         fetchStock();
+        setLoading(false);
       });
-  };
+  }, [range, customStart, customEnd, calculateTopSelling, fetchStock]);
 
-  // 2. Fetch Stock
-  const fetchStock = () => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/menu`, {
-      headers: { Authorization: `Bearer ${getToken()}` },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          const lowStock = data.filter((item) => (item.stock || 0) < 20);
-          setLowStockItems(lowStock);
-        }
-      })
-      .catch((err) => console.error("Error fetching menu:", err))
-      .finally(() => setLoading(false));
-  };
-
-  // 3. Calculate Top Items
-  const calculateTopSelling = (bills) => {
-    const itemCounts = {};
-    bills.forEach((bill) => {
-      bill.items.forEach((item) => {
-        itemCounts[item.name] = (itemCounts[item.name] || 0) + item.quantity;
-      });
-    });
-
-    const sortedItems = Object.keys(itemCounts)
-      .map((key) => ({ name: key, count: itemCounts[key] }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 5);
-
-    setTopItems(sortedItems);
-  };
-
+  // 🔄 Effect: Auto-fetch when range changes
   useEffect(() => {
     if (range !== "custom") {
       fetchDashboardData();
     }
-  }, [range]);
+  }, [range, fetchDashboardData]); // ✅ fetchDashboardData added as dependency
 
   const handleCustomApply = () => {
     if (customStart && customEnd) {
@@ -109,7 +108,6 @@ function Dashboard() {
     <>
       <Navbar />
       <div className="dashboard-container">
-        {/* HEADER */}
         <div className="dashboard-header">
           <h2>📊 Dashboard Overview</h2>
           <div
@@ -158,14 +156,12 @@ function Dashboard() {
           <p>Loading analytics...</p>
         ) : (
           <div className="dashboard-grid">
-            {/* 💰 1. SALES CARD */}
             <div style={{ ...styles.card, background: "#e0f7fa" }}>
               <h3>Total Sales</h3>
               <p style={styles.number}>₹{stats.totalSales}</p>
               <small style={styles.subtext}>Revenue In</small>
             </div>
 
-            {/* 💸 2. EXPENSES CARD (NEW) */}
             <div style={{ ...styles.card, background: "#ffebee" }}>
               <h3>Total Expenses</h3>
               <p style={{ ...styles.number, color: "#c0392b" }}>
@@ -174,7 +170,6 @@ function Dashboard() {
               <small style={styles.subtext}>Costs Out</small>
             </div>
 
-            {/* 📈 3. NET PROFIT CARD (NEW) */}
             <div style={{ ...styles.card, background: "#e8f5e9" }}>
               <h3>Net Profit</h3>
               <p
@@ -190,14 +185,12 @@ function Dashboard() {
               <small style={styles.subtext}>Earnings (Sales - Expenses)</small>
             </div>
 
-            {/* 🧾 4. ORDERS CARD */}
             <div style={{ ...styles.card, background: "#fff3e0" }}>
               <h3>Total Orders</h3>
               <p style={styles.number}>{stats.billCount}</p>
               <small style={styles.subtext}>Bills Created</small>
             </div>
 
-            {/* 🔥 TOP SELLING ITEMS */}
             <div
               style={{
                 ...styles.card,
@@ -224,7 +217,6 @@ function Dashboard() {
               )}
             </div>
 
-            {/* ⚠️ LOW STOCK ALERT */}
             <div
               style={{
                 ...styles.card,
@@ -260,7 +252,6 @@ function Dashboard() {
               )}
             </div>
 
-            {/* 🕒 RECENT ACTIVITY */}
             <div
               style={{
                 ...styles.card,
